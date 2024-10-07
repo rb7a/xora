@@ -1,5 +1,6 @@
+import React, { useState } from "react";
 import { Element } from "react-scroll";
-import { useState } from "react";
+import { motion, AnimatePresence } from 'framer-motion';
 import clsx from "clsx";
 import CountUp from "react-countup";
 import { plans } from "../constants/index.jsx";
@@ -8,16 +9,52 @@ import Button from "../components/Button.jsx";
 const Pricing = () => {
   const [monthly, setMonthly] = useState(false);
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.5, ease: "easeOut" }
+    }
+  };
+
+  const toggleVariants = {
+    monthly: { x: 0 },
+    annual: { x: "100%" }
+  };
+
   return (
     <section>
       <Element name="pricing">
-        <div className="container">
+        <motion.div 
+          className="container"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+        >
           <div className="max-w-960 pricing-head_before relative mx-auto border-l border-r border-s2 bg-s1/50 pb-40 pt-28 max-xl:max-w-4xl max-lg:border-none max-md:pb-32 max-md:pt-16">
-            <h3 className="h3 max-lg:h4 max-md:h5 z-3 relative mx-auto mb-14 max-w-lg text-center text-p4 max-md:mb-11 max-sm:max-w-sm">
+            <motion.h3 
+              className="h3 max-lg:h4 max-md:h5 z-3 relative mx-auto mb-14 max-w-lg text-center text-p4 max-md:mb-11 max-sm:max-w-sm"
+              variants={itemVariants}
+            >
               Flexible pricing for teams of all sizes
-            </h3>
+            </motion.h3>
 
-            <div className="relative z-4 mx-auto flex w-[375px] rounded-3xl border-[3px] border-s4/25 bg-s1/50 p-2 backdrop-blur-[6px] max-md:w-[310px]">
+            <motion.div 
+              className="relative z-4 mx-auto flex w-[375px] rounded-3xl border-[3px] border-s4/25 bg-s1/50 p-2 backdrop-blur-[6px] max-md:w-[310px]"
+              variants={itemVariants}
+            >
               <button
                 className={clsx("pricing-head_btn", monthly && "text-p4")}
                 onClick={() => setMonthly(true)}
@@ -31,15 +68,20 @@ const Pricing = () => {
                 Annual
               </button>
 
-              <div
+              <motion.div
                 className={clsx(
-                  "g4 rounded-14 before:h-100 pricing-head_btn_before absolute left-2 top-2 h-[calc(100%-16px)] w-[calc(50%-8px)] overflow-hidden shadow-400 transition-transform duration-500",
-                  !monthly && "translate-x-full",
+                  "g4 rounded-14 before:h-100 pricing-head_btn_before absolute left-2 top-2 h-[calc(100%-16px)] w-[calc(50%-8px)] overflow-hidden shadow-400"
                 )}
+                variants={toggleVariants}
+                animate={monthly ? "monthly" : "annual"}
+                transition={{ duration: 0.3 }}
               />
-            </div>
+            </motion.div>
 
-            <div className="pricing-bg">
+            <motion.div 
+              className="pricing-bg"
+              variants={itemVariants}
+            >
               <img
                 src="/images/bg-outlines.svg"
                 width={960}
@@ -54,25 +96,39 @@ const Pricing = () => {
                 alt="outline"
                 className="absolute inset-0 opacity-5 mix-blend-soft-light"
               />
-            </div>
+            </motion.div>
           </div>
 
           {/*  pricing section*/}
-          <div className="scroll-hide relative z-2 -mt-12 flex items-start max-xl:gap-5 max-xl:overflow-auto max-xl:pt-6">
+          <motion.div 
+            className="scroll-hide relative z-2 -mt-12 flex items-start max-xl:gap-5 max-xl:overflow-auto max-xl:pt-6"
+            variants={containerVariants}
+          >
             {plans.map((plan, index) => (
-              <div
+              <motion.div
                 key={plan.id}
                 className="pricing-plan_first pricing-plan_last pricing-plan_odd pricing-plan_even relative border-2 p-7 max-xl:min-w-80 max-lg:rounded-3xl xl:w-[calc(33.33%+2px)]"
+                variants={itemVariants}
+                whileHover={{ scale: 1.05 }}
+                transition={{ duration: 0.3 }}
               >
                 {index === 1 && (
-                  <div className="g4 absolute h-330 left-0 right-0 top-0 z-1 rounded-tl-3xl rounded-tr-3xl" />
+                  <motion.div 
+                    className="g4 absolute h-330 left-0 right-0 top-0 z-1 rounded-tl-3xl rounded-tr-3xl"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.5, delay: 0.2 }}
+                  />
                 )}
 
-                <div
+                <motion.div
                   className={clsx(
                     "absolute left-0 right-0 z-2 flex items-center justify-center",
                     index === 1 ? "-top-6" : "-top-6 xl:-top-11",
                   )}
+                  initial={{ y: -20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ duration: 0.5, delay: 0.3 }}
                 >
                   <img
                     src={plan.logo}
@@ -82,7 +138,7 @@ const Pricing = () => {
                       index === 1 ? "size-[120px]" : "size-[88px]",
                     )}
                   />
-                </div>
+                </motion.div>
 
                 <div
                   className={clsx(
@@ -90,16 +146,24 @@ const Pricing = () => {
                     index === 1 ? "pt-24" : "pt-12",
                   )}
                 >
-                  <div
+                  <motion.div
                     className={clsx(
                       "small-2 rounded-20 relative z-2 mx-auto mb-6 border-2 px-4 py-1.5 uppercase",
                       index === 1 ? "border-p3 text-p3" : "border-p1 text-p1",
                     )}
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ duration: 0.5, delay: 0.4 }}
                   >
                     {plan.title}
-                  </div>
+                  </motion.div>
 
-                  <div className="relative z-2 flex items-center justify-center">
+                  <motion.div 
+                    className="relative z-2 flex items-center justify-center"
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ duration: 0.5, delay: 0.5 }}
+                  >
                     <div
                       className={clsx(
                         "h-num flex items-start",
@@ -118,23 +182,32 @@ const Pricing = () => {
                     <div className="small-1 relative top-3 ml-1 uppercase">
                       / mo
                     </div>
-                  </div>
+                  </motion.div>
                 </div>
 
-                <div
+                <motion.div
                   className={clsx(
                     "body-1 relative z-2 mb-10 w-full border-b-s2 pb-9 text-center text-p4",
                     index === 1 && "border-b",
                   )}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.5, delay: 0.6 }}
                 >
                   {plan.caption}
-                </div>
+                </motion.div>
 
-                <ul className="mx-auto space-y-4 xl:px-7">
+                <motion.ul 
+                  className="mx-auto space-y-4 xl:px-7"
+                  variants={containerVariants}
+                  initial="hidden"
+                  animate="visible"
+                >
                   {plan.features.map((feature) => (
-                    <li
+                    <motion.li
                       key={feature}
                       className="relative flex items-center gap-5"
+                      variants={itemVariants}
                     >
                       <img
                         src={"/images/check.png"}
@@ -142,23 +215,33 @@ const Pricing = () => {
                         className="size-10 object-contain"
                       />
                       <p className="flex-1">{feature}</p>
-                    </li>
+                    </motion.li>
                   ))}
-                </ul>
+                </motion.ul>
 
-                <div className="mt-10 flex w-full justify-center">
+                <motion.div 
+                  className="mt-10 flex w-full justify-center"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.8 }}
+                >
                   <Button icon={plan.icon}>Get Started</Button>
-                </div>
+                </motion.div>
 
                 {index === 1 && (
-                  <p className="small-compact mt-9 text-center text-p3 before:mx-2.5 before:content-['-'] after:mx-2.5 after:content-['-']">
+                  <motion.p 
+                    className="small-compact mt-9 text-center text-p3 before:mx-2.5 before:content-['-'] after:mx-2.5 after:content-['-']"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.5, delay: 0.9 }}
+                  >
                     Limited time offer
-                  </p>
+                  </motion.p>
                 )}
-              </div>
+              </motion.div>
             ))}
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </Element>
     </section>
   );

@@ -1,12 +1,26 @@
 import clsx from "clsx";
+import { motion } from "framer-motion";
+
+// Animation variants for each item
+const itemVariants = {
+  hidden: { opacity: 0, scale: 0.8 },
+  visible: { 
+    opacity: 1, 
+    scale: 1, 
+    transition: { 
+      duration: 0.5 
+    } 
+  }
+};
 
 const TestimonialItem = ({ item, containerClassName }) => {
   return (
-    <div
+    <motion.div
       className={clsx(
         "relative px-14 pb-14 pt-11 after:absolute after:bottom-0 after:right-0 after:h-0.5 after:w-screen after:bg-s2 after:content-[''] max-md:px-0 max-md:pt-11 after:max-md:-right-4",
-        containerClassName,
+        containerClassName
       )}
+      variants={itemVariants}
     >
       <blockquote className="h6 mb-8 text-p4">{item.comment}</blockquote>
 
@@ -23,7 +37,8 @@ const TestimonialItem = ({ item, containerClassName }) => {
           <p className="small-compact uppercase text-s3">{item.role}</p>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
+
 export default TestimonialItem;
